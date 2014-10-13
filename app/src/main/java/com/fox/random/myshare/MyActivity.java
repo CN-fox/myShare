@@ -2,16 +2,47 @@ package com.fox.random.myshare;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.fox.random.SinaPlatform;
+
+import fox.random.core.ShareSDK;
+import fox.random.core.callback.AuthListener;
+import fox.random.core.constants.SNS;
+import fox.random.core.exception.SnsException;
+
 
 public class MyActivity extends ActionBarActivity {
+    private String TAG = "myShare";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
+        SinaPlatform sinaPlatform = new SinaPlatform("1316579902");
+        ShareSDK.doOauthVerify(this,sinaPlatform,new AuthListener() {
+            @Override
+            public void onStart() {
+                Log.d(TAG,"onStart");
+            }
+
+            @Override
+            public void onComplete(Bundle bundle, SNS sns) {
+                Log.d(TAG,"onComplete");
+            }
+
+            @Override
+            public void onError(SnsException e, SNS sns) {
+                Log.d(TAG,"onError");
+            }
+
+            @Override
+            public void onCancel(SNS sns) {
+                Log.d(TAG,"onCancel");
+            }
+        });
     }
 
 
