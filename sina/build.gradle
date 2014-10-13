@@ -1,13 +1,13 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 19
-    buildToolsVersion '19.1.0'
+    buildToolsVersion "19.1.0"
 
     defaultConfig {
-        applicationId "com.fox.random.myshare"
+        applicationId "fox.random.sina"
         minSdkVersion 8
-        targetSdkVersion 19
+        targetSdkVersion 8
         versionCode 1
         versionName "1.0"
     }
@@ -22,4 +22,5 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:19.0.0'
+    compile files('libs/weibosdkcore.jar')
 }
