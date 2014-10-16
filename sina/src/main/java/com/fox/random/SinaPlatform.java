@@ -1,13 +1,19 @@
 package com.fox.random;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.fox.random.ui.AuthActivity;
 import com.sina.weibo.sdk.auth.WeiboAuth;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.sina.weibo.sdk.exception.WeiboException;
+import com.sina.weibo.sdk.utils.LogUtil;
+import com.sina.weibo.sdk.utils.NetworkHelper;
+import com.sina.weibo.sdk.utils.ResourceManager;
+import com.sina.weibo.sdk.utils.UIUtils;
 
 import fox.random.core.Platform;
 import fox.random.core.callback.AuthListener;
@@ -27,6 +33,14 @@ public class SinaPlatform extends Platform {
      */
     private String redirectUrl = "https://api.weibo.com/oauth2/default.html";
     private String scope = "";
+
+    private SsoHandler ssoHandler;
+
+    /**
+     * 是否是Activity样式，默认值是true
+     * TODO 后续进行设置优化
+     */
+    private boolean isActivity = true;
 
     public SinaPlatform(String appKey){
         this.appKey = appKey;
@@ -54,10 +68,14 @@ public class SinaPlatform extends Platform {
         };
         authListener.onStart();
         if (useSSO){
-            SsoHandler ssoHandler = new SsoHandler(context,weiboAuth);
+            ssoHandler = new SsoHandler(context,weiboAuth);
             ssoHandler.authorize(listener);
         }else {
-            weiboAuth.anthorize(listener);
+            if (isActivity){
+                new AuthActivity(context,weiboAuth,listener).show();
+            }else {
+                weiboAuth.anthorize(listener);
+            }
         }
     }
 
@@ -72,5 +90,11 @@ public class SinaPlatform extends Platform {
      */
     public void setSSO(boolean useSSO){
         this.useSSO = useSSO;
+    }
+
+    public void authorizeCallBack(int requestCode, int resultCode, Intent data){
+        if (ssoHandler!=null){
+            ssoHandler.authorizeCallBack(requestCode,resultCode,data);
+        }
     }
 }

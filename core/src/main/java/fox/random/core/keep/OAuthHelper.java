@@ -1,6 +1,7 @@
 package fox.random.core.keep;
 
 import android.content.Context;
+import android.os.Bundle;
 
 import fox.random.core.constants.SNS;
 
@@ -28,9 +29,23 @@ public class OAuthHelper {
     }
 
     /**
+     * 保存授权信息
+     * @param context
+     * @param sns 对应的平台
+     * @param bundle 授权返回数据
+     */
+    public static final void save(Context context,SNS sns,Bundle bundle){
+        switch (sns){
+            case SINA:
+                new SinaOAuthSave().save(context,bundle);
+                break;
+        }
+    }
+
+    /**
      * 删除对应平台的授权
      * @param context
-     * @param sns
+     * @param sns 对应的平台
      */
     public static final void remove(Context context,SNS sns){
         switch (sns){
