@@ -22,6 +22,7 @@ public class MyActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
         SinaPlatform sinaPlatform = new SinaPlatform("1316579902");
+        sinaPlatform.setSSO(true);
         ShareSDK.doOauthVerify(this,sinaPlatform,new AuthListener() {
             @Override
             public void onStart() {
