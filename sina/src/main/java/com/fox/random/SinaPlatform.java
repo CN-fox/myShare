@@ -21,7 +21,11 @@ import fox.random.core.exception.SnsException;
 public class SinaPlatform extends Platform {
     private boolean useSSO = false;
     private String appKey;
-    private String redirectUrl = " "; //https://api.weibo.com/oauth2/default.html
+    /**
+     * 回调地址使用的是新浪官方默认的，可以在官网进行修改，同时也需要修改此处。
+     * 后续看是否对此处进行优化
+     */
+    private String redirectUrl = "https://api.weibo.com/oauth2/default.html";
     private String scope = "";
 
     public SinaPlatform(String appKey){
