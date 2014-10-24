@@ -2,7 +2,6 @@ package fox.random.core;
 
 import android.app.Activity;
 
-import fox.random.core.api.LoginApi;
 import fox.random.core.callback.AuthListener;
 import fox.random.core.constants.SNS;
 
@@ -10,7 +9,7 @@ import fox.random.core.constants.SNS;
  * 平台类
  * Created by w_q on 14-10-14.
  */
-public abstract class Platform implements LoginApi{
+public abstract class Platform{
     private boolean useSSO = false;
 
     /**
@@ -24,5 +23,5 @@ public abstract class Platform implements LoginApi{
      * 获得平台的类型
      * @return
      */
-    protected abstract SNS getSns();
+    public abstract SNS getSns();
 }

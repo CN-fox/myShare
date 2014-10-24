@@ -10,10 +10,6 @@ import com.sina.weibo.sdk.auth.WeiboAuth;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.sina.weibo.sdk.exception.WeiboException;
-import com.sina.weibo.sdk.utils.LogUtil;
-import com.sina.weibo.sdk.utils.NetworkHelper;
-import com.sina.weibo.sdk.utils.ResourceManager;
-import com.sina.weibo.sdk.utils.UIUtils;
 
 import fox.random.core.Platform;
 import fox.random.core.callback.AuthListener;
@@ -58,7 +54,7 @@ public class SinaPlatform extends Platform {
             @Override
             public void onWeiboException(WeiboException e) {
                 Log.d("myShare",e.toString());
-                authListener.onError(new SnsException(), getSns());
+                authListener.onError(new SnsException(e), getSns());
             }
 
             @Override

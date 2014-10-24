@@ -1,11 +1,12 @@
 package com.fox.random.myshare;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TabHost;
 
 import com.fox.random.SinaPlatform;
 
@@ -23,6 +24,10 @@ public class MyActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
+
+        TabHost tabHost = (TabHost)findViewById(R.id.tb_id);
+        TabHost.TabSpec tab1 = tabHost.newTabSpec("First Tab");
+
         sinaPlatform = new SinaPlatform("1316579902");
        // sinaPlatform.setSSO(true);
         ShareSDK.doOauthVerify(this, sinaPlatform,new AuthListener() {
