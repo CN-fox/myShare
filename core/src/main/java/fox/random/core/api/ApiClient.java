@@ -3,7 +3,10 @@ package fox.random.core.api;
 import android.app.Activity;
 import android.os.Bundle;
 
+import java.lang.reflect.Field;
+
 import fox.random.core.Platform;
+import fox.random.core.ShareSDK;
 import fox.random.core.api.params.ShareParams;
 import fox.random.core.callback.AuthListener;
 import fox.random.core.callback.ShareListener;
@@ -19,6 +22,12 @@ import fox.random.core.utils.ShareLog;
 public class ApiClient implements AuthApi, ShareApi {
     private static String TAG = "ApiClient";
 
+    /**
+     * 授权接口的实现
+     * @param context
+     * @param platform 需要授权的平台
+     * @param authListener 授权结果回调接口
+     */
     @Override
     public void doOauthVerify(final Activity context, final Platform platform, final AuthListener authListener) {
 
@@ -74,8 +83,35 @@ public class ApiClient implements AuthApi, ShareApi {
         platform.doOauthVerify(context, mAuthListener);
     }
 
+    /**
+     * 分享接口的实现
+     * @param activity
+     * @param shareParams
+     * @param shareListener
+     */
     @Override
-    public void share(Activity activity, ShareParams shareParams, ShareListener shareListener) {
+    public void share(Activity activity, ShareParams shareParams, final ShareListener shareListener) {
+        //获得对应的平台
+        SNS sns = shareParams.getSns();
+        Platform platform = ShareSDK.getPlatform(sns);
 
+        if (!OAuthHelper.isAuthenticated(activity, sns)) {
+            platform.shareAfterLogin(true);
+        }
+
+        //调用平台的分享方法
+        ShareListener mShareListener = new ShareListener() {
+            @Override
+            public void success(SNS sns) {
+                shareListener.success(sns);
+            }
+
+            @Override
+            public void error(Throwable e, SNS sns) {
+                shareListener.error(e,sns);
+            }
+        };
+
+        platform.share(activity,shareParams,mShareListener);
     }
 }

@@ -6,17 +6,21 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TabHost;
+import android.view.View;
 
 import com.fox.random.SinaPlatform;
+import com.sina.weibo.sdk.constant.WBConstants;
 
 import fox.random.core.ShareSDK;
+import fox.random.core.api.params.BaseShareParams;
+import fox.random.core.api.params.ShareParams;
 import fox.random.core.callback.AuthListener;
+import fox.random.core.callback.ShareListener;
 import fox.random.core.constants.SNS;
 import fox.random.core.exception.SnsException;
 
 
-public class MyActivity extends ActionBarActivity {
+public class MyActivity extends ActionBarActivity implements View.OnClickListener {
     private String TAG = "myShare";
     private SinaPlatform sinaPlatform;
 
@@ -25,39 +29,92 @@ public class MyActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
 
-        TabHost tabHost = (TabHost)findViewById(R.id.tb_id);
-        TabHost.TabSpec tab1 = tabHost.newTabSpec("First Tab");
+        initView();
 
-        sinaPlatform = new SinaPlatform("1316579902");
-       // sinaPlatform.setSSO(true);
-        ShareSDK.doOauthVerify(this, sinaPlatform,new AuthListener() {
-            @Override
-            public void onStart() {
-                Log.d(TAG,"onStart");
-            }
+        sinaPlatform = (SinaPlatform) ShareSDK.getPlatform(SNS.SINA,"1316579902");
 
-            @Override
-            public void onComplete(Bundle bundle, SNS sns) {
-                Log.d(TAG,bundle.toString());
-                Log.d(TAG,"onComplete");
-            }
+        if (savedInstanceState != null && sinaPlatform !=null)
+            sinaPlatform.handleWeiboResponse(getIntent());
+    }
 
-            @Override
-            public void onError(SnsException e, SNS sns) {
-                Log.d(TAG,"onError");
-            }
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (sinaPlatform != null)
+            sinaPlatform.handleWeiboResponse(intent);
+    }
 
-            @Override
-            public void onCancel(SNS sns) {
-                Log.d(TAG,"onCancel");
-            }
-        });
+    private void initView(){
+        findViewById(R.id.sina_login).setOnClickListener(this);
+        findViewById(R.id.sina_share).setOnClickListener(this);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
         sinaPlatform.authorizeCallBack(requestCode,resultCode,data);
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.sina_login:
+                sinaLogin();
+                break;
+            case R.id.sina_share:
+                sinaShare();
+                break;
+        }
+    }
+
+    private void sinaLogin(){
+        sinaPlatform.setSSO(true);
+        ShareSDK.doOauthVerify(this, sinaPlatform, new AuthListener() {
+            @Override
+            public void onStart() {
+                Log.d(TAG, "onStart");
+            }
+
+            @Override
+            public void onComplete(Bundle bundle, SNS sns) {
+                Log.d(TAG, bundle.toString());
+                Log.d(TAG, "onComplete");
+            }
+
+            @Override
+            public void onError(SnsException e, SNS sns) {
+                Log.d(TAG, "onError");
+            }
+
+            @Override
+            public void onCancel(SNS sns) {
+                Log.d(TAG, "onCancel");
+            }
+        });
+    }
+
+    private void sinaShare(){
+        BaseShareParams baseShareParams = new BaseShareParams();
+        baseShareParams.setContent("测试一下");
+
+        ShareParams shareParams = new ShareParams();
+        shareParams.setSns(SNS.SINA);
+        shareParams.setBaseShareParams(baseShareParams);
+
+
+        ShareSDK.share(this,shareParams,new ShareListener() {
+            @Override
+            public void success(SNS sns) {
+
+            }
+
+            @Override
+            public void error(Throwable e, SNS sns) {
+
+            }
+        });
     }
 
     @Override
